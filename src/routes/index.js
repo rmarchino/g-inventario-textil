@@ -5,6 +5,7 @@ const clienteRouter = require('./cliente.routes');
 const categoriaRouter = require('./categoria.routes');
 const compraRouter = require("./compras.routes");
 const ventaRouter = require("./venta.routes");
+const facturaRouter = require("./factura.routes");
 
 const apiRoutes = (app) => {
     app.use(userRouter);
@@ -14,6 +15,7 @@ const apiRoutes = (app) => {
     app.use(categoriaRouter);
     app.use(compraRouter);
     app.use(ventaRouter);
+    app.use(facturaRouter);
 };
 
 module.exports = apiRoutes;

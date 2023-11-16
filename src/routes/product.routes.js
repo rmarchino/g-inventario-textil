@@ -3,7 +3,7 @@ const { FindAllProducts } = require('../controllers/product.controllers');
 
 const router = Router();
 
-router.get('/products', FindAllProducts);
+router.get('/productos', FindAllProducts);
 
 
 

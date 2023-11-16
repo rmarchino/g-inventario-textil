@@ -57,8 +57,8 @@ const loginUser = async (req, res, next) => {
                 message: "Password no coincide  con el email del usuario"
             });
         }
-        const {id, firstname, lastname, username, validEmail, profileImage, role, createdAt, updatedAt } = user;
-        const userData = {id, firstname, lastname, username, validEmail, profileImage, role, createdAt, updatedAt }
+        const {id, firstname, lastname, username, role } = user;
+        const userData = {id, firstname, lastname, username, role }
         
         // Generar token 
         const token = jwt.sign(userData, process.env.JWT_SECRET_LOGIN, {
