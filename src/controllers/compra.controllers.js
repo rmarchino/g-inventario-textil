@@ -13,12 +13,18 @@ const GetAllCompras = async (req, res, next) => {
 const GetDetailCompras = async (req, res, next) => {
     try {
         const compraId = req.params.id;
-        const compra = await Compras.findByPark(compraId, {
+        const compra = await Compras.findByPk(compraId, {
             include: [{
                 model: DetailCompras,
                 include: [Productos]
             }]
         });
+
+        if(!compra) {
+            return res.status(404).json({
+                error: 'Compra no encontrada'
+            });
+        }
 
         res.json(compra);
         

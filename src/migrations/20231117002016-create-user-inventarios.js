@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Ventas', {
+    await queryInterface.createTable('UserInventarios', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -17,25 +17,25 @@ module.exports = {
           key: 'id'
         }
       },
-      clienteId: {
+      productoId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Clientes',
+          model: 'Productos',
           key: 'id'
         }
       },
-      createdAt: {
-        allowNull: false,
+      fechaAccion: {
         type: Sequelize.DATE
       },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
+      accion: {
+        type: Sequelize.ENUM('Agregar', 'Eliminar')
+      },
+    }, {
+      timestamps: false,
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Ventas');
+    await queryInterface.dropTable('UserInventarios');
   }
 };

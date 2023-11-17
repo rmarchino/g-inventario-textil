@@ -4,7 +4,7 @@ const { GetAllCompras, GetDetailCompras } = require('../controllers/compra.contr
 const router = Router();
 
 router.get('/compras', GetAllCompras);
-router.get('/compras/:id', GetDetailCompras);
+router.get('/compras/:id/detalle', GetDetailCompras);
 
 
 module.exports = router;

@@ -16,19 +16,20 @@ module.exports = {
         type: Sequelize.STRING(30)
       },
       username: {
-        type: Sequelize.STRING(30)
+        type: Sequelize.STRING(30),
+        allowNull: false,
+        unique: true,
       },
       email: {
         type: Sequelize.STRING(50),
         allowNull: false,
         unique: true,
         validate: {
-          isEmail: true,
+          isEmail:true,
         }
       },
       password: {
-        type: Sequelize.TEXT,
-        allowNull:false,
+        type: Sequelize.TEXT
       },
       validEmail: {
         type: Sequelize.BOOLEAN
@@ -37,7 +38,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       role: {
-        type: Sequelize.ENUM('Admin', 'Almacenero', 'Comprador', 'Vendedor'),
+        type: Sequelize.ENUM('Almacenero', 'Admin', 'Comprador', 'Vendedor'),
         defaultValue: 'Almacenero'
       },
     }, {

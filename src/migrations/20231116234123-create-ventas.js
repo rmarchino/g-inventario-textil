@@ -2,41 +2,39 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('DetailCompras', {
+    await queryInterface.createTable('Ventas', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      compraId: {
+      usuarioId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Compras',
+          model: 'Usuarios',
           key: 'id'
-        }
+        },
+        onDelete: 'CASCADE'
       },
-      productoId: {
+      clienteId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Productos',
+          model: 'Clientes',
           key: 'id'
-        }
+        },
+        onDelete: 'CASCADE'
       },
-      cantidad: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      precioUnitario: {
-        type: Sequelize.DECIMAL
+      fechaVenta: {
+        type: Sequelize.DATE
       },
     }, {
       timestamps: false,
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('DetailCompras');
+    await queryInterface.dropTable('Ventas');
   }
 };

@@ -4,6 +4,6 @@ const { GeatAllVentas, GetDetailsVentas } = require('../controllers/venta.contro
 const router = Router();
 
 router.get('/ventas', GeatAllVentas);
-router.get('/ventas/:id', GetDetailsVentas);
+router.get('/ventas/:id/detalle', GetDetailsVentas);
 
 module.exports = router;

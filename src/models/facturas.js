@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   Facturas.init({
     usuarioId: DataTypes.INTEGER,
     ventaId: DataTypes.INTEGER,
+    fechaFactura: DataTypes.DATE,
     subTotal: DataTypes.DECIMAL,
     igv: DataTypes.INTEGER,
     total: DataTypes.DECIMAL

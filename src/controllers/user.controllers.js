@@ -132,7 +132,7 @@ const CreateUsersInventrio = async (req, res, next) => {
 
 const CreateCompra = async (req, res, next) => {
     try {
-        const { usuarioId, productos  } = req.body;
+        const { usuarioId, productos, proveedorId  } = req.body;
 
         //Verificar que el usuario y producto existe
         const userExist = await Usuarios.findByPk(usuarioId);
@@ -147,7 +147,7 @@ const CreateCompra = async (req, res, next) => {
         const nuevaCompra = await Compras.create({
             proveedorId,
             usuarioId,
-            createdAt: new Date(),
+            fechaCompra: new Date(),
         });
 
         // Iterar sobre los productos y crear detalles de compra
@@ -207,7 +207,7 @@ const RealizarVenta = async (req, res, next) => {
         const nuevaVenta = await Ventas.create({
             usuarioId,
             clienteId,
-            createdAt: new Date(),
+            fechaVenta: new Date(),
         });
 
         //Iterar sobre los productos y crear detalles de venta

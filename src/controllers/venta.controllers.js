@@ -17,6 +17,13 @@ const GetDetailsVentas = async (req, res, next) => {
         const venta = await Ventas.findByPk(ventaId, {
             include: [{ model: DetailVentas, include: [Productos] }]
         });
+
+        if(!venta) {
+            return res.status(404).json({
+                error: 'Venta no concretada.'
+            });
+        }
+
         res.json(venta);
 
     } catch (error) {

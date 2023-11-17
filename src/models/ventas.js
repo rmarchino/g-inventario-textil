@@ -11,19 +11,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Ventas.hasMany(models.DetailVentas, { foreignKey: 'VentaId' });
-      Ventas.hasMany(models.Facturas, { foreignKey: 'VentaId' });
-      Ventas.belongsTo(models.Clientes,{foreignKey:'clienteId'});
-      Ventas.belongsTo(models.Usuarios,{foreignKey:'usuarioId'});
-      
+      Ventas.hasMany(models.Facturas, {foreignKey: 'ventaId'});
+      Ventas.hasMany(models.DetailVentas, {foreignKey: 'ventaId'});
+      Ventas.belongsTo(models.Clientes, {foreignKey: 'clienteId'});
+      Ventas.belongsTo(models.Usuarios, {foreignKey: 'usuarioId'});
     }
   }
   Ventas.init({
     usuarioId: DataTypes.INTEGER,
-    clienteId: DataTypes.INTEGER
+    clienteId: DataTypes.INTEGER,
+    fechaVenta: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'Ventas',
+    timestamps: false,
   });
   return Ventas;
 };
