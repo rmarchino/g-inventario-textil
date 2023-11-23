@@ -3,7 +3,6 @@ const morgan = require('morgan');
 const cors = require('cors');
 const apiRoutes = require('./routes');
 const errorRoutes = require('./routes/errors.routes');
-
 require("dotenv").config();
 
 // Creamos la instancia
