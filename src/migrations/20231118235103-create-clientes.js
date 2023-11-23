@@ -10,18 +10,33 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       nombre: {
-        type: Sequelize.STRING(50),
+        type: Sequelize.STRING(100),
         allowNull: false,
+      },
+      dni: {
+        type: Sequelize.STRING(8)
       },
       direccion: {
         type: Sequelize.STRING(100)
       },
       telefono: {
         type: Sequelize.STRING(15),
-        allowNull: false,
+        allowNulla: false,
       },
-      ruc: {
-        type: Sequelize.STRING(15)
+      email: {
+        type: Sequelize.STRING(50),
+        unique: true,
+        validate: {
+          isEmail: true,
+        }
+      },
+      usuario: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Usuarios",
+          key: 'id',
+        }
       },
     }, {
       timestamps: false,

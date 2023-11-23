@@ -2,54 +2,55 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Productos', {
+    await queryInterface.createTable('EntradaProductos', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      proveedorId: {
+      fecha: {
+        type: Sequelize.DATE
+      },
+      cantidad: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      precioUnitario: {
+        type: Sequelize.DECIMAL(10,2)
+      },
+      importe: {
+        type: Sequelize.DECIMAL(10,2)
+      },
+      producto: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Productos',
+          key: 'id'
+        }
+      },
+      usuario: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Usuarios',
+          key: 'id'
+        }
+      },
+      proveedor: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: 'Proveedores',
           key: 'id'
-        },
-        onDelete: 'CASCADE'
-      },
-      categoriaId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Categorias',
-          key: 'id'
-        },
-        onDelete: 'CASCADE'
-      },
-      nombre: {
-        type: Sequelize.STRING(100),
-        allowNull: false,
-      },
-      descripcion: {
-        type: Sequelize.TEXT
-      },
-      imagen: {
-        type: Sequelize.STRING
-      },
-      precio: {
-        type: Sequelize.DECIMAL(10,2),
-        allowNull: false,
-      },
-      stock: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
+        }
       },
     }, {
       timestamps: false,
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Productos');
+    await queryInterface.dropTable('EntradaProductos');
   }
 };

@@ -11,14 +11,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Clientes.hasMany(models.Ventas, {foreignKey: 'clienteId'});
+      Clientes.belongsTo(models.Usuarios, {foreignKey: 'usuario'});
+      Clientes.hasMany(models.Facturas, {foreignKey: 'cliente'});
     }
   }
   Clientes.init({
     nombre: DataTypes.STRING,
+    dni: DataTypes.STRING,
     direccion: DataTypes.STRING,
     telefono: DataTypes.STRING,
-    ruc: DataTypes.STRING
+    email: DataTypes.STRING,
+    usuario: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Clientes',

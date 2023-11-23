@@ -11,10 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Usuarios.hasMany(models.Compras, {foreignKey: 'usuarioId'});
-      Usuarios.hasMany(models.UserInventarios, {foreignKey: 'usuarioId'});
-      Usuarios.hasMany(models.Ventas, {foreignKey: 'usuarioId'});
-      Usuarios.hasMany(models.Facturas, {foreignKey: 'usuarioId'});
+      Usuarios.hasMany(models.Productos, {foreignKey: 'usuario'});
+      Usuarios.hasMany(models.EntradaProductos, {foreignKey: 'usuario'});
+      Usuarios.hasMany(models.Proveedores, {foreignKey: 'usuario'});
+      Usuarios.hasMany(models.Clientes, {foreignKey: 'usuario'});
+      Usuarios.hasMany(models.SalidaProductos, {foreignKey: 'usuario'});
     }
   }
   Usuarios.init({
@@ -25,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     validEmail: DataTypes.BOOLEAN,
     profileImage: DataTypes.STRING,
-    role: DataTypes.ENUM('Almacenero', 'Admin', 'Comprador', 'Vendedor')
+    role: DataTypes.ENUM('admin', 'vendedor', 'almacenero')
   }, {
     sequelize,
     modelName: 'Usuarios',

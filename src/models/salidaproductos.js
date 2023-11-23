@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Facturas extends Model {
+  class SalidaProductos extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,23 +11,22 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Facturas.hasMany(models.SalidaProductos, {foreignKey: 'factura'});
-      Facturas.belongsTo(models.Clientes, {foreignKey: 'cliente'});
+      SalidaProductos.belongsTo(models.Productos, {foreignKey: 'producto'});
+      SalidaProductos.belongsTo(models.Usuarios, {foreignKey: 'usuario'});
+      SalidaProductos.belongsTo(models.Facturas, {foreignKey: 'factura'});
     }
   }
-  Facturas.init({
+  SalidaProductos.init({
+    fecha: DataTypes.DATE,
     cantidad: DataTypes.INTEGER,
-    descripcion: DataTypes.STRING,
     precioUnitario: DataTypes.DECIMAL,
-    importe: DataTypes.DECIMAL,
-    subTotal: DataTypes.DECIMAL,
-    igv: DataTypes.INTEGER,
-    total: DataTypes.DECIMAL,
-    cliente: DataTypes.INTEGER
+    producto: DataTypes.INTEGER,
+    usuario: DataTypes.INTEGER,
+    factura: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'Facturas',
+    modelName: 'SalidaProductos',
     timestamps: false,
   });
-  return Facturas;
+  return SalidaProductos;
 };

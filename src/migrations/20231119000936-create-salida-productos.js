@@ -2,49 +2,54 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Facturas', {
+    await queryInterface.createTable('SalidaProductos', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      usuarioId: {
+      fecha: {
+        type: Sequelize.DATE
+      },
+      cantidad: {
+        type: Sequelize.INTEGER,
+      },
+      precioUnitario: {
+        type: Sequelize.DECIMAL(10,2),
+      },
+      producto: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Productos',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
+      },
+      usuario: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: 'Usuarios',
           key: 'id'
-        }
+        },
+        onDelete: 'CASCADE'
       },
-      ventaId: {
+      factura: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Ventas',
+          model: 'Facturas',
           key: 'id'
-        }
-      },
-      fechaFactura: {
-        type: Sequelize.DATE
-      },
-      subTotal: {
-        type: Sequelize.DECIMAL(10,2),
-        allowNull: false,
-      },
-      igv: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      total: {
-        type: Sequelize.DECIMAL(10,2),
-        allowNull: false,
+        },
+        onDelete: 'CASCADE'
       },
     }, {
       timestamps: false,
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Facturas');
+    await queryInterface.dropTable('SalidaProductos');
   }
 };

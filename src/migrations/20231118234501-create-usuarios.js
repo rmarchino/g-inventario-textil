@@ -16,9 +16,7 @@ module.exports = {
         type: Sequelize.STRING(30)
       },
       username: {
-        type: Sequelize.STRING(30),
-        allowNull: false,
-        unique: true,
+        type: Sequelize.STRING(30)
       },
       email: {
         type: Sequelize.STRING(50),
@@ -29,17 +27,19 @@ module.exports = {
         }
       },
       password: {
-        type: Sequelize.TEXT
+        type: Sequelize.STRING(255),
+        allowNull: false,
       },
       validEmail: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
       },
       profileImage: {
         type: Sequelize.STRING
       },
       role: {
-        type: Sequelize.ENUM('Almacenero', 'Admin', 'Comprador', 'Vendedor'),
-        defaultValue: 'Almacenero'
+        type: Sequelize.ENUM('admin', 'vendedor', 'almacenero'),
+        defaultValue: 'vendedor',
       },
     }, {
       timestamps: false,

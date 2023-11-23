@@ -1,13 +1,12 @@
 const { 
     Usuarios,
     Productos,
-    UserInventarios,
-    Compras,
-    Ventas,
-    DetailCompras,
-    DetailVentas,
+    EntradaProductos,
+    SalidaProductos,
     Facturas,
     Clientes,
+    Proveedores,
+    sequelize,
 } = require('../models');
 
 const bcrypt = require('bcrypt');
@@ -85,182 +84,193 @@ const findAllUser = async (req, res, next) => {
     }
 }
 
-const CreateUsersInventrio = async (req, res, next) => {
+const createProducto = async (req, res, next) => {
     try {
-        const { usuarioId, productoId, accion } = req.body;
+        const { nombre, descripcion, precio, stock, categoria, usuario } = req.body;
 
-        //Verificar que el usuario y el producto existan
-        let userExist = await Usuarios.findByPk(usuarioId);
-        const productExist = await Productos.findByPk(productoId);
+        // Verificar que el usuario y producto existe
+        const usuarioExiste = await Usuarios.findByPk(usuario);
 
-        if (!userExist || productExist) {
-            return res.status(404).json({ 
-                error: 'uario o producto no encontrado. '
-             });
-        }
-
-        // Lógica para determinar la acción (Agregar o Eliminar)
-        if (accion === 'Agregar') {
-            //Incrementar la cantidad en el stock del producto
-            productExist.stock += 1;
-        } else if (accion === 'Eliminar') {
-            productExist.stock -=1;
-        } else {
-            return res.status(400).json({
-                error: "Acción no válida. Debe ser Agregar o  Eliminar."
-            });
-        }
-
-        // Guardar la accion en la tabla UserInventario
-        await UserInventarios.create({
-            usuarioId,
-            productoId,
-            createdAt: new Date(),
-        });
-
-        //Guardar los cambios en el producto
-        await productExist.save();
-
-        res.status(201).json({
-            message: 'Acción registrada en el inventario exitosamente.'
-        });
-
-    } catch (error) {
-        next(error);
-    }
-}
-
-const CreateCompra = async (req, res, next) => {
-    try {
-        const { usuarioId, productos, proveedorId  } = req.body;
-
-        //Verificar que el usuario y producto existe
-        const userExist = await Usuarios.findByPk(usuarioId);
-
-        if(!userExist ){
+        if (!usuarioExiste) {
             return res.status(404).json({
-                error: 'Usuario no encontrado'
+                error: 'Usuario no existe. '
             });
         }
 
-        //Crear una nueva compra
-        const nuevaCompra = await Compras.create({
-            proveedorId,
-            usuarioId,
-            fechaCompra: new Date(),
+        // crear el producto
+        const producto = await Productos.create({
+            nombre,
+            descripcion,
+            precio,
+            stock,
+            categoria,
+            usuario,
         });
-
-        // Iterar sobre los productos y crear detalles de compra
-        for (const { productoId, cantidad, precioUnitario } of productos) {
-            
-            //Verificar que el producto exista
-            const productoExist = await Productos.findByPk(productoId);
-            if (!productoExist) {
-                return res.status(404).json({
-                    error: `Producto con id ${productoId}, no se encuentra`
-                });
-            }
-
-            // Verificar si hay suficiente stock
-            if(productoExist.stock < cantidad) {
-                return res.status(400).json({
-                    error: `Stock insuficiente para el producto con ID ${productoId}.`
-                });
-            }
-
-            //Actualizar el stock del producto
-            productoExist.stock -= cantidad;
-            await productoExist.save();
-
-            //Crear el detalle de la compra
-            await DetailCompras.create({
-                compraId: nuevaCompra.id,
-                productoId,
-                cantidad,
-                precioUnitario,
-            });
-        }
+        // res.status(201).json({
+        //     message: "Se ha agregado un nuevo producto"
+        // });
         res.status(201).json({
-            message: "La compra fue realizada exitosamente"
-        });
-        
-    } catch (error) {
-        next(error);
-    }
-}
-
-const RealizarVenta = async (req, res, next) => {
-    try {
-        const { usuarioId, clienteId, productos } = req.body;
-
-        //Validar que el cliente y usuario exista
-        const userExist = await Usuarios.findByPk(usuarioId);
-        const clienteExist = await Clientes.findByPk(clienteId);
-
-        if (!userExist || clienteExist) {
-            return res.status(404).json({
-                error: 'Usuario o cliente no encontrado.'
-            })
-        };
-
-        //Crear una venta
-        const nuevaVenta = await Ventas.create({
-            usuarioId,
-            clienteId,
-            fechaVenta: new Date(),
-        });
-
-        //Iterar sobre los productos y crear detalles de venta
-        for (const { productoId, cantidad, precioUnitario } of productos) {
-            
-            //Verificar si el producto existe en inventario
-            const productExist = await Productos.findByPk(productoId);
-
-            if (!productExist) {
-                return res.status(404).json({
-                    error: `El producto con id ${productoId}, no se encuentra registrado.`
-                });
-            }
-
-            //Verificar si hay suficiente stock disponible
-            if (productExist.stock < cantidad) {
-                return res.status(400).json({
-                    error: `No hay suficientes unidades del producto para la venta solicitada con el ID ${productoId}`
-                });
-            }
-
-            //Actulizar el stock del producto
-            productExist.stock -= cantidad;
-            await productExist.save();
-
-            //Crear el detalle de la venta
-            await DetailVentas.create({
-                ventaId: nuevaVenta.id,
-                productoId,
-                cantidad,
-                precioUnitario,
-            });
-        }
-
-        //Calcular el subtotal, IGV y total para la factura
-        const subTotal = cantidad * precioUnitario ;
-        const igv = subTotal * 0.18;
-        const total = subTotal + igv;
-
-        //Crear la factura asociada a la venta
-        const factura = await Facturas.create({
-            usuarioId,
-            ventaId: nuevaVenta.id,
-            createdAt: new Date(),
-            subTotal: subTotal,
-            igv: igv,
-            total: total,
-        });
-
-        res.status(201).json({
-            message: 'La venta fue realizada exitosamente',
+            success: true, producto
         })
         
+    } catch (error) {
+        next(error);
+    }
+}
+
+const createCliente = async (req, res, next) => {
+    try {
+        const { nombre, dni, direccion, telefono, email, usuario } = req.body;
+
+        // Verificar si el cliente y usuario ya existe
+        const usuarioExiste = await Usuarios.findByPk(usuario);
+        const clienteExiste = await Clientes.findOne({where:{dni}});
+
+        if (!usuarioExiste || clienteExiste) {
+            return res.status(401).json({
+                error: 'El cliente o usuario no existen.'
+            });
+        }
+        // Crear el cliente
+        const clientes = await Clientes.create({
+            nombre,
+            dni,
+            direccion,
+            telefono,
+            email,
+            usuario,
+        });
+        res.status(201).json({
+            success: true, clientes
+        })
+        
+    } catch (error) {
+        next(error);
+    }
+}
+
+const createProveedor = async (req, res, next) => {
+    try {
+        const { nombre, direccion, telefono, ruc, email, usuario } = req.body;
+
+        // Verificar si el proveedor y usuario ya existe
+        const usuarioExiste = await Usuarios.findByPk(usuario);
+        const proveedorExiste = await Proveedores.findOne({where:{ruc}});
+
+        if (!usuarioExiste || proveedorExiste) {
+            return res.status(401).json({
+                error: 'El proveedor o usuario no existen.'
+            });
+        }
+        // Crear el proveedor
+        const proveedor = await Proveedores.create({
+            nombre,
+            direccion,
+            telefono,
+            ruc,
+            email,
+            usuario,
+        });
+        res.status(201).json({
+            success: true, proveedor
+        })
+        
+    } catch (error) {
+        next(error);
+    }
+}
+
+const registerEntradaProducto = async (req, res, next) => {
+    try {
+        const { fecha, cantidad, precioUnitario, importe, producto, usuario, proveedor  } = req.body;
+
+        //Verificar que el usuario, producto  y proveedor existe
+        const usuarioExiste = await Usuarios.findByPk(usuario);
+        const productoExiste = await Productos.findOne({ where :{nombre:producto}}) ;
+        const proveedorExiste = await Proveedores.findOne({where:{ruc:proveedor}});
+        
+        if(!usuarioExiste || !productoExiste || !proveedorExiste){
+            return res.status(404).json({
+                error: 'Usuario, producto o proveedor no existen'
+            })
+        }
+
+        // Calcular el importe
+        const totalImporte = precioUnitario * cantidad;
+
+        //Crear una nueva compra
+        await EntradaProductos.create({
+            fecha: fecha = new Date(),
+            cantidad,
+            precioUnitario,
+            importe: totalImporte,
+            producto,
+            usuario,
+            proveedor,
+        });
+        res.status(201).json({
+            message: "La entrada de producto se ha registrado correctamente"
+        });
+        
+    } catch (error) {
+        next(error);
+    }
+}
+
+const registerSalidaProducto = async (req, res, next) => {
+    try {
+        const { quantity, unitPrice, userId, productId, clienteId } = req.body;
+
+        // Realizar el proceso de venta del producto
+        const transaction = await sequelize.transaction();
+
+        try {
+            // Crear un registro de salida de producto
+            const salidaProducto = await SalidaProductos.create({
+                fecha: new Date(),
+                cantidad: quantity,
+                precioUnitario: unitPrice,
+                producto: productId,
+                usuario: userId,
+            }, { transaction });
+            
+            // Calcular el importe
+            const totalImporte = precioUnitario * cantidad;
+    
+            //Calcular el subtotal, IGV y total para la factura
+            const subTotal = cantidad * precioUnitario ;
+            const igv = subTotal * 0.18;
+            const total = subTotal + igv;
+    
+            // Crear un registro en Factura
+            const newfactura = await Facturas.create({
+                cantidad,
+                descripcion: 'Product sale',
+                precioUnitario,
+                importe: totalImporte,
+                subTotal: subTotal,
+                igv: igv,
+                total: total,
+                cliente: clienteId,
+            }, { transaction });
+            
+            // Actualizar el stock en Productos
+            const producto = await Productos.findByPk(producto, { transaction });
+            producto.stock -= quantity;
+            await producto.save({ transaction });
+            
+            // Confirmar la transacción
+            await transaction.commit();
+
+            res.status(201).json({
+                message: 'La venta del producto se completó con éxito.'
+            });
+
+        } catch (error) {
+            // Revertir la transacción en caso de error
+            await transaction.rollback();
+            throw error;
+        }
     } catch (error) {
         next(error);
     }
@@ -271,7 +281,9 @@ module.exports = {
     createUser,
     loginUser,
     findAllUser,
-    CreateUsersInventrio,
-    CreateCompra,
-    RealizarVenta,
+    createProducto,
+    createCliente,
+    createProveedor,
+    registerEntradaProducto,
+    registerSalidaProducto,
 }

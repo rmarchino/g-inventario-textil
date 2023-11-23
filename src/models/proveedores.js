@@ -11,15 +11,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Proveedores.hasMany(models.Compras, {foreignKey: 'proveedorId'});
-      Proveedores.hasMany(models.Productos, {foreignKey: 'proveedorId'});
+      Proveedores.hasMany(models.EntradaProductos, {foreignKey: 'proveedor'});
+      Proveedores.belongsTo(models.Usuarios, {foreignKey: 'usuario'});
     }
   }
   Proveedores.init({
     nombre: DataTypes.STRING,
     direccion: DataTypes.STRING,
     telefono: DataTypes.STRING,
-    ruc: DataTypes.STRING
+    ruc: DataTypes.STRING,
+    email: DataTypes.STRING,
+    usuario: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Proveedores',
