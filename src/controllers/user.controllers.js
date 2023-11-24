@@ -110,18 +110,26 @@ const createProducto = async (req, res, next) => {
   try {
     const { nombre, descripcion, precio, stock, categoria, usuario } = req.body;
 
+    const imagen = null;
+    if (req.file) {
+      imagen = req.file.filename;
+    }
+
     // Verificar que el usuario y producto existe
     const usuarioExiste = await Usuarios.findByPk(usuario);
 
     if (!usuarioExiste) {
-      return res.status(404).json({
-        error: "Usuario no existe. ",
+      return next({
+        status: 404,
+        namme: "Usuario no existe. ",
+        message: "El usuario debe estar registrado en la bd.",
       });
     }
 
     // crear el producto
     const producto = await Productos.create({
       nombre,
+      imagen,
       descripcion,
       precio,
       stock,
