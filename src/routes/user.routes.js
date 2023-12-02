@@ -12,7 +12,10 @@ const {
   createUserValidator,
   loginUserValidator,
 } = require("../validators/users.validators");
-const { authenticate } = require("../middlewares/auth.middleware");
+const {
+  authenticate,
+  validateEmail,
+} = require("../middlewares/auth.middleware");
 const createProductoValidator = require("../validators/producto.validator");
 const createClienteValidator = require("../validators/cliente.validator");
 const createProveedorValidator = require("../validators/proveedor.validator");
@@ -42,5 +45,6 @@ router.post(
 router.post("/entrada-productos", registerSalidaProducto);
 router.post("/salida-productos", registerSalidaProducto);
 router.get("/users", findAllUser);
+router.post("/users/email-validate", validateEmail);
 
 module.exports = router;
