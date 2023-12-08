@@ -8,6 +8,7 @@ const {
   createProveedor,
   registerSalidaProducto,
 } = require("../controllers/user.controllers");
+
 const {
   createUserValidator,
   loginUserValidator,
@@ -16,6 +17,7 @@ const {
   authenticate,
   validateEmail,
 } = require("../middlewares/auth.middleware");
+
 const createProductoValidator = require("../validators/producto.validator");
 const createClienteValidator = require("../validators/cliente.validator");
 const createProveedorValidator = require("../validators/proveedor.validator");
