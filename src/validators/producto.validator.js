@@ -25,24 +25,18 @@ const createProductoValidator = [
     .withMessage("precio no debe de estar vacío"),
 
   check("stock", "Error en el campo stock")
-    .isNumeric()
-    .withMessage("El tipo de dato debe ser numérico")
     .isInt()
     .withMessage("Tipo de dato debe de ser entero")
     .notEmpty()
     .withMessage("stock no debe de estar vacío"),
 
   check("categoria", "Error en el campo categoria")
-    .isString()
-    .withMessage("Tipo de dato debe de ser string")
     .notEmpty()
     .withMessage("categoria no debe de estar vacío"),
 
-  check("usuario", "Error en el campo usuario")
-    .isInt()
-    .withMessage("Tipo de dato debe de ser entero")
-    .notEmpty()
-    .withMessage("usuario no debe de estar vacío"),
+  // check("usuario", "Error en el campo usuario")
+  //   .notEmpty()
+  //   .withMessage("usuario no debe de estar vacío"),
 
   validateResult,
 ];

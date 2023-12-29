@@ -7,6 +7,7 @@ const {
   createCliente,
   createProveedor,
   registerSalidaProducto,
+  registerEntradaProducto,
 } = require("../controllers/user.controllers");
 
 const {
@@ -44,7 +45,7 @@ router.post(
   authenticate,
   createProveedor
 );
-router.post("/entrada-productos", registerSalidaProducto);
+router.post("/entrada-productos", registerEntradaProducto);
 router.post("/salida-productos", registerSalidaProducto);
 router.get("/users", findAllUser);
 router.post("/users/email-validate", validateEmail);
